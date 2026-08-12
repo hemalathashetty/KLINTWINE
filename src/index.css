@@ -1,0 +1,250 @@
+/* Fonts Setup */
+@font-face {
+  font-family: 'Canela';
+  src: url('/fonts/Canela_Thin_Web.woff2') format('woff2');
+  font-weight: 100 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'MonumentGrotesk';
+  src: url('/fonts/ABCMonumentGrotesk_Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Custom CSS Variables & Design Tokens */
+:root {
+  --colors-sand: #CFC6BD;
+  --colors-brown: #191714;
+  --colors-white: #ffffff;
+  --colors-cream: #ECE9E5;
+  --colors-background: #191714; /* Deep brown / black background for hero */
+  
+  --font-serif: 'Canela', serif;
+  --font-sans: 'MonumentGrotesk', sans-serif;
+  
+  --spacing-grid: 20px;
+}
+
+/* Reset and Globals */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background-color: var(--colors-cream);
+  color: var(--colors-brown);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hide scrollbars but keep functionality if needed */
+/* ::-webkit-scrollbar {
+  display: none;
+} */
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Typography styles matching Klimt Wine original */
+.textStyle_heading1 {
+  font-family: var(--font-serif);
+  font-weight: 100;
+  font-size: clamp(3.5rem, 8vw, 8.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  text-transform: capitalize;
+}
+
+.textStyle_heading2 {
+  font-family: var(--font-serif);
+  font-weight: 100;
+  font-size: clamp(2.5rem, 6vw, 5.5rem);
+  line-height: 1.0;
+  letter-spacing: -0.01em;
+}
+
+.textStyle_heading3 {
+  font-family: var(--font-serif);
+  font-weight: 100;
+  font-size: clamp(1.8rem, 4vw, 3.2rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.textStyle_heading4 {
+  font-family: var(--font-serif);
+  font-weight: 100;
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  line-height: 1.25;
+}
+
+.textStyle_bodyText {
+  font-family: var(--font-sans);
+  font-size: clamp(0.9rem, 1.2vw, 1.05rem);
+  line-height: 1.45;
+  font-weight: 400;
+}
+
+.textStyle_metadata {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* Premium Layout & Grid Helper Utilities */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--spacing-grid);
+  padding-left: var(--spacing-grid);
+  padding-right: var(--spacing-grid);
+  width: 100%;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.px-grid {
+  padding-left: var(--spacing-grid);
+  padding-right: var(--spacing-grid);
+}
+
+/* Animations */
+@keyframes drawStroke {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes floatBottle {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(1deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+/* Diamond Background Pattern Layer */
+.diamond-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url('/diamond-pattern.png');
+  background-repeat: repeat;
+  background-size: auto 100vh;
+  opacity: 0.04;
+  mix-blend-mode: multiply;
+  z-index: 1;
+}
+
+/* Responsive Menu Drawer Styles */
+.mobile-menu-overlay {
+  position: fixed;
+  inset: 20px;
+  background-color: var(--colors-sand);
+  color: var(--colors-brown);
+  border-radius: 16px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 40px 24px 24px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  transform: translateY(-120%);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mobile-menu-overlay.open {
+  transform: translateY(0);
+}
+
+/* Preloader glass fill animation styling */
+@keyframes loaderWave {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-42px); }
+}
+
+.anim_loaderWave_1500ms_ease-in-out_infinite {
+  animation: loaderWave 1.5s linear infinite;
+  display: block;
+}
+
+.trf-b_fill-box {
+  transform-box: fill-box;
+}
+
+.trf-o_center_bottom {
+  transform-origin: center bottom;
+}
+
+.trf-o_center_center {
+  transform-origin: center center;
+}
+
+/* Layout structural modifications for premium feel */
+.spotlight-radial-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 40%, var(--spotlight-color, rgba(164,164,115,0.3)) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  transition: background 0.8s ease;
+}
+
+/* Horizontal scroll showcase wrappers */
+.showcase-scroll-container {
+  position: relative;
+  width: 100%;
+}
+
+.wine-article {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 100px var(--spacing-grid) 80px;
+  position: relative;
+  scroll-snap-align: start;
+}
+
+/* Glassmorphism custom styling for elements */
+.glass-pill {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+/* Scroll snap scroll area */
+.scroll-snap-y {
+  scroll-snap-type: y mandatory;
+  overflow-y: auto;
+  height: 100vh;
+  width: 100%;
+}
