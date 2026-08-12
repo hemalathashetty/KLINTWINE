@@ -73,30 +73,6 @@ flowchart TD
 
 ---
 
-## 🚀 Local Installation & Setup
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/vanishajalady/klintwine.git
-   cd klintwine
-   ```
-
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-
-3. **Start local development server**:
-   ```bash
-   npm run dev
-   ```
-   Open `http://localhost:5173/` in your browser.
-
-4. **Build production bundle**:
-   ```bash
-   npm run build
-   ```
-
 ---
 
 ## 🌐 Deploying to Vercel
@@ -108,17 +84,6 @@ This project is fully configured for zero-config deployment on **[Vercel](https:
 npm i -g vercel
 vercel
 ```
-
-### Option 2: Via Vercel Dashboard
-1. Go to [vercel.com/new](https://vercel.com/new).
-2. Connect your GitHub account and select `vanishajalady/klintwine`.
-3. Keep default settings:
-   - **Framework Preset**: Vite
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `dist`
-4. Click **Deploy**.
-
----
 
 ## 📜 License
 
