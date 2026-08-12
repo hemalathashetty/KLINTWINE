@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import BottleCanvas from '../components/BottleCanvas';
+// BottleCanvas is now managed globally at App.tsx level
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -21,7 +21,6 @@ export default function Hero({ lang }: HeroProps) {
   const behindTextRef = useRef<HTMLHeadingElement>(null);
 
   const branchRef = useRef<HTMLDivElement>(null);
-  const bottleRef = useRef<HTMLDivElement>(null);
 
   const t = {
     en: {
@@ -44,18 +43,17 @@ export default function Hero({ lang }: HeroProps) {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // 1. Initial page load entry animation
+      // 1. Initial page load entry animation (Tied to bottle growth)
       gsap.fromTo(
-        [titleRef.current, copyRef.current, scrollRef.current],
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 1.2, stagger: 0.2, ease: 'power3.out', delay: 0.5 }
+        branchRef.current,
+        { opacity: 0, scale: 1.15 },
+        { opacity: 1, scale: 1.0, duration: 1.8, ease: 'power2.out', delay: 0.2 }
       );
 
-      // Float the bottle slightly at load
       gsap.fromTo(
-        bottleRef.current,
-        { y: 15 },
-        { y: -15, duration: 3, repeat: -1, yoyo: true, ease: 'sine.inOut' }
+        [titleRef.current, copyRef.current, scrollRef.current],
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, duration: 1.4, stagger: 0.25, ease: 'power3.out', delay: 0.4 }
       );
 
       // 2. Scroll triggered transitions
@@ -131,7 +129,7 @@ export default function Hero({ lang }: HeroProps) {
         overflow: 'hidden'
       }}
     >
-      {/* Background Video */}
+      {/* Background Video & Warm Ambient Spotlight */}
       <div
         style={{
           position: 'fixed',
@@ -154,42 +152,42 @@ export default function Hero({ lang }: HeroProps) {
             width: '100%',
             height: '100%',
             objectFit: 'cover',
-            opacity: 0.55,
+            opacity: 0.45,
             transition: 'opacity 0.5s ease'
           }}
         />
-        {/* Soft radial spotlight behind bottle */}
+        {/* Soft golden radial spotlight behind bottle */}
         <div
           style={{
             position: 'absolute',
             inset: 0,
-            background: 'radial-gradient(ellipse at 50% 50%, rgba(140, 115, 78, 0.45) 0%, rgba(25, 23, 20, 0.85) 60%, #191714 92%)',
+            background: 'radial-gradient(ellipse at 50% 45%, rgba(185, 148, 88, 0.42) 0%, rgba(35, 30, 25, 0.88) 55%, #141210 90%)',
             pointerEvents: 'none',
             zIndex: 1
           }}
         />
-        {/* Soft linear gradient overlay to fade into brown bottom */}
+        {/* Linear gradient fade into dark base */}
         <div
           style={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(180deg, transparent 50%, rgba(25, 23, 20, 0.8) 80%, #191714 100%)',
+            background: 'linear-gradient(180deg, transparent 50%, rgba(20, 18, 16, 0.85) 80%, #141210 100%)',
             pointerEvents: 'none',
             zIndex: 1
           }}
         />
       </div>
 
-      {/* Pinned Tree Vine Branch (Log) behind the bottle */}
+      {/* Pinned Tree Vine Branch (Log) looping behind the 3D bottle */}
       <div
         ref={branchRef}
         style={{
           position: 'absolute',
-          left: '52%',
-          top: '48%',
-          width: '840px',
-          height: '760px',
-          transform: 'translate(-42%, -50%)',
+          left: '50%',
+          top: '46%',
+          width: '960px',
+          height: '840px',
+          transform: 'translate(-38%, -48%)',
           pointerEvents: 'none',
           zIndex: 2,
           opacity: 1
@@ -202,34 +200,14 @@ export default function Hero({ lang }: HeroProps) {
             width: '100%',
             height: '100%',
             objectFit: 'contain',
-            filter: 'brightness(1.1) contrast(1.15) drop-shadow(0 15px 35px rgba(0,0,0,0.6))'
+            filter: 'brightness(1.15) contrast(1.2) drop-shadow(0 25px 50px rgba(0,0,0,0.75))'
           }}
         />
       </div>
 
-      {/* 3D WebGL Pinned Bottle */}
-      <div
-        ref={bottleRef}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '600px',
-          height: '100vh',
-          zIndex: 3,
-          pointerEvents: 'none'
-        }}
-      >
-        <BottleCanvas
-          variant="veltliner"
-          scale={1.22}
-          yPercent={0}
-          scrollTriggerType="hero"
-        />
-      </div>
+      {/* 3D WebGL Pinned Bottle is rendered globally at App.tsx level */}
 
-      {/* Hero Content Panel (Fixed height container in scroll trigger) */}
+      {/* Hero Content Panel */}
       <div
         style={{
           position: 'sticky',
@@ -238,22 +216,25 @@ export default function Hero({ lang }: HeroProps) {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          padding: '120px 40px 40px',
-          zIndex: 2,
+          padding: '135px 55px 45px',
+          zIndex: 12,
           pointerEvents: 'none'
         }}
       >
-        {/* Large Title Area */}
+        {/* Large Editorial Serif Title */}
         <div style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
           <h1
             ref={titleRef}
             className="textStyle_heading1"
             style={{
-              maxWidth: '920px',
+              maxWidth: '980px',
               fontFamily: "'Canela', serif",
               fontWeight: 100,
-              color: '#CFC6BD',
-              lineHeight: 0.95
+              color: '#F5F1EB',
+              fontSize: 'clamp(5rem, 9vw, 9.8rem)',
+              lineHeight: 0.9,
+              letterSpacing: '-0.025em',
+              textShadow: '0 4px 35px rgba(0,0,0,0.6)'
             }}
           >
             <span style={{ display: 'block' }}>{t[lang].title1}</span>
@@ -261,7 +242,7 @@ export default function Hero({ lang }: HeroProps) {
           </h1>
         </div>
 
-        {/* Footer Area */}
+        {/* Footer Info Area */}
         <div
           style={{
             display: 'flex',
@@ -274,21 +255,81 @@ export default function Hero({ lang }: HeroProps) {
             ref={copyRef}
             className="textStyle_bodyText"
             style={{
-              maxWidth: '380px',
-              color: '#CFC6BD'
+              maxWidth: '340px',
+              color: 'rgba(245, 241, 235, 0.85)',
+              fontSize: '0.85rem',
+              lineHeight: 1.55,
+              fontWeight: 400
             }}
           >
             {t[lang].copy}
           </p>
-          <p
+          <div
             ref={scrollRef}
-            className="textStyle_metadata"
             style={{
-              color: '#CFC6BD'
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              color: 'rgba(245, 241, 235, 0.85)',
+              fontSize: '0.82rem',
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase'
             }}
           >
-            {t[lang].scroll}
-          </p>
+            <span>{t[lang].scroll}</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 5v14M19 12l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Bottom Center Floating Wine Selector Pill */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '40px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 30,
+            pointerEvents: 'auto'
+          }}
+        >
+          <a
+            href="#showcase"
+            className="glass-pill"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              backgroundColor: '#FFFFFF',
+              color: '#191714',
+              padding: '9px 24px',
+              borderRadius: '40px',
+              boxShadow: '0 10px 32px rgba(0,0,0,0.35)',
+              fontSize: '0.85rem',
+              fontWeight: 500,
+              textDecoration: 'none',
+              transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), boxShadow 0.25s ease'
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px) scale(1.03)';
+              e.currentTarget.style.boxShadow = '0 14px 38px rgba(0,0,0,0.45)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.transform = 'translateY(0) scale(1)';
+              e.currentTarget.style.boxShadow = '0 10px 32px rgba(0,0,0,0.35)';
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '3px', height: '24px' }}>
+              <img src="/uploads/gruner_veltliner_632b1976ea.webp" alt="" style={{ height: '24px', width: 'auto' }} />
+              <img src="/uploads/white_blend_3978284690.webp" alt="" style={{ height: '24px', width: 'auto' }} />
+              <img src="/uploads/red_blend_e2fec91509.webp" alt="" style={{ height: '24px', width: 'auto' }} />
+            </div>
+            <span>Our Wines</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </a>
         </div>
       </div>
 

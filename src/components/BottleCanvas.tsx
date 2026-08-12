@@ -1,53 +1,96 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
 import * as THREE from 'three';
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-gsap.registerPlugin(ScrollTrigger);
-
-interface BottleCanvasProps {
-  variant: 'veltliner' | 'white' | 'red';
-  scale?: number;
-  yPercent?: number; // visual vertical offset
-  float?: boolean;
-  scrollTriggerType?: 'hero' | 'none';
-  rotationY?: number;
-  rotationZ?: number;
+export interface BottleCanvasHandle {
+  group: THREE.Group | null;
+  setVariant: (variant: 'veltliner' | 'white' | 'red', duration?: number) => void;
+  setOpacity: (opacity: number, duration?: number) => void;
 }
 
-export default function BottleCanvas({
-  variant,
-  scale = 1.22,
-  yPercent = 0,
-  float = false,
-  scrollTriggerType = 'none',
-  rotationY = 0,
-  rotationZ = 0
-}: BottleCanvasProps) {
+interface BottleCanvasProps {
+  onReady?: () => void;
+  float?: boolean;
+}
+
+const BottleCanvas = forwardRef<BottleCanvasHandle, BottleCanvasProps>(({ onReady, float = true }, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const bottleGroupRef = useRef<THREE.Group | null>(null);
 
-  const getTextureUrls = (v: 'veltliner' | 'white' | 'red') => {
-    switch (v) {
-      case 'white':
-        return {
-          body: '/uploads/wine_white_bottle_texture_49ecbf6e48.webp',
-          cover: '/uploads/wine_white_cover_texture_f096ed3faa.webp'
-        };
-      case 'red':
-        return {
-          body: '/uploads/wine_red_bottle_texture_1ec4e2fed6.webp',
-          cover: '/uploads/wine_red_cover_texture_4928d1e811.webp'
-        };
-      case 'veltliner':
-      default:
-        return {
-          body: '/uploads/wine_veltliner_bottle_texture_e4ed053c52.webp',
-          cover: '/uploads/wine_veltliner_cover_texture_4a741b879a.webp'
-        };
+  const rootGroupRef = useRef<THREE.Group>(null);
+  const veltlinerMeshRef = useRef<THREE.Mesh>(null);
+  const whiteMeshRef = useRef<THREE.Mesh>(null);
+  const redMeshRef = useRef<THREE.Mesh>(null);
+
+  const veltlinerMatRef = useRef<THREE.MeshStandardMaterial>(null);
+  const whiteMatRef = useRef<THREE.MeshStandardMaterial>(null);
+  const redMatRef = useRef<THREE.MeshStandardMaterial>(null);
+
+  const activeVariantRef = useRef<'veltliner' | 'white' | 'red'>('veltliner');
+  const rootGroupOpacityRef = useRef<{ val: number }>({ val: 1.0 });
+
+  useImperativeHandle(ref, () => ({
+    group: rootGroupRef.current,
+    setVariant: (variant, duration = 0.5) => {
+      if (activeVariantRef.current === variant) return;
+      activeVariantRef.current = variant;
+
+      const vMat = veltlinerMatRef.current;
+      const wMat = whiteMatRef.current;
+      const rMat = redMatRef.current;
+      const baseO = rootGroupOpacityRef.current.val;
+
+      if (!vMat || !wMat || !rMat) return;
+
+      if (variant === 'veltliner') {
+        if (veltlinerMeshRef.current) veltlinerMeshRef.current.visible = true;
+        if (whiteMeshRef.current) whiteMeshRef.current.visible = true;
+        if (redMeshRef.current) redMeshRef.current.visible = true;
+
+        gsap.to(vMat, { opacity: 1.0 * baseO, duration, ease: 'power2.inOut' });
+        gsap.to(wMat, { opacity: 0, duration, ease: 'power2.inOut', onComplete: () => { if (whiteMeshRef.current) whiteMeshRef.current.visible = false; } });
+        gsap.to(rMat, { opacity: 0, duration, ease: 'power2.inOut', onComplete: () => { if (redMeshRef.current) redMeshRef.current.visible = false; } });
+      } else if (variant === 'white') {
+        if (veltlinerMeshRef.current) veltlinerMeshRef.current.visible = true;
+        if (whiteMeshRef.current) whiteMeshRef.current.visible = true;
+        if (redMeshRef.current) redMeshRef.current.visible = true;
+
+        gsap.to(vMat, { opacity: 0, duration, ease: 'power2.inOut', onComplete: () => { if (veltlinerMeshRef.current) veltlinerMeshRef.current.visible = false; } });
+        gsap.to(wMat, { opacity: 1.0 * baseO, duration, ease: 'power2.inOut' });
+        gsap.to(rMat, { opacity: 0, duration, ease: 'power2.inOut', onComplete: () => { if (redMeshRef.current) redMeshRef.current.visible = false; } });
+      } else if (variant === 'red') {
+        if (veltlinerMeshRef.current) veltlinerMeshRef.current.visible = true;
+        if (whiteMeshRef.current) whiteMeshRef.current.visible = true;
+        if (redMeshRef.current) redMeshRef.current.visible = true;
+
+        gsap.to(vMat, { opacity: 0, duration, ease: 'power2.inOut', onComplete: () => { if (veltlinerMeshRef.current) veltlinerMeshRef.current.visible = false; } });
+        gsap.to(wMat, { opacity: 0, duration, ease: 'power2.inOut', onComplete: () => { if (whiteMeshRef.current) whiteMeshRef.current.visible = false; } });
+        gsap.to(rMat, { opacity: 1.0 * baseO, duration, ease: 'power2.inOut' });
+      }
+    },
+    setOpacity: (opacity, duration = 0.3) => {
+      if (duration === 0) {
+        rootGroupOpacityRef.current.val = opacity;
+        const targetMat = activeVariantRef.current === 'veltliner' ? veltlinerMatRef.current : activeVariantRef.current === 'white' ? whiteMatRef.current : redMatRef.current;
+        if (targetMat) targetMat.opacity = opacity;
+        if (rootGroupRef.current) rootGroupRef.current.visible = opacity > 0.001;
+      } else {
+        gsap.to(rootGroupOpacityRef.current, {
+          val: opacity,
+          duration,
+          ease: 'power2.out',
+          onUpdate: () => {
+            const currentO = rootGroupOpacityRef.current.val;
+            if (rootGroupRef.current) rootGroupRef.current.visible = currentO > 0.001;
+            const activeV = activeVariantRef.current;
+            if (activeV === 'veltliner' && veltlinerMatRef.current) veltlinerMatRef.current.opacity = currentO;
+            if (activeV === 'white' && whiteMatRef.current) whiteMatRef.current.opacity = currentO;
+            if (activeV === 'red' && redMatRef.current) redMatRef.current.opacity = currentO;
+          }
+        });
+      }
     }
-  };
+  }));
 
   useEffect(() => {
     if (!canvasRef.current || !containerRef.current) return;
@@ -55,14 +98,14 @@ export default function BottleCanvas({
     const width = containerRef.current.clientWidth;
     const height = containerRef.current.clientHeight;
 
-    // 1. Scene setup
+    // Scene
     const scene = new THREE.Scene();
 
-    // 2. Camera setup
+    // Camera
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-    camera.position.set(0, 0, 8.8);
+    camera.position.set(0, 0, 8.5);
 
-    // 3. Renderer setup
+    // Renderer
     const renderer = new THREE.WebGLRenderer({
       canvas: canvasRef.current,
       antialias: true,
@@ -70,173 +113,158 @@ export default function BottleCanvas({
     });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    (renderer as any).outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
 
-    // 4. Lighting setup (Premium studio highlights)
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
+    // Studio Lighting Setup
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.95);
     scene.add(ambientLight);
 
-    const mainLight = new THREE.DirectionalLight(0xffffff, 1.2);
-    mainLight.position.set(5, 3, 5);
-    scene.add(mainLight);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    dirLight.position.set(3, 5, 5);
+    scene.add(dirLight);
 
-    const rimLightLeft = new THREE.DirectionalLight(0xfff7e6, 1.5);
-    rimLightLeft.position.set(-5, 2, -3);
-    scene.add(rimLightLeft);
+    // Root Group
+    const rootGroup = new THREE.Group();
+    scene.add(rootGroup);
+    (rootGroupRef as any).current = rootGroup;
 
-    const rimLightRight = new THREE.DirectionalLight(0xffffff, 1.0);
-    rimLightRight.position.set(5, -2, -3);
-    scene.add(rimLightRight);
-
-    // 5. Build Wine Bottle using LatheGeometry
-    const { body, cover } = getTextureUrls(variant);
+    // Texture Loader
     const textureLoader = new THREE.TextureLoader();
 
-    const bodyTexture = textureLoader.load(body);
-    bodyTexture.wrapS = THREE.RepeatWrapping;
-    bodyTexture.wrapT = THREE.ClampToEdgeWrapping;
+    // Load Official 4K Studio Renders from scraped uploads
+    const tVeltliner = textureLoader.load('/uploads/gruner_veltliner_632b1976ea.webp');
+    const tWhite = textureLoader.load('/uploads/white_blend_3978284690.webp');
+    const tRed = textureLoader.load('/uploads/red_blend_e2fec91509.webp');
 
-    const coverTexture = textureLoader.load(cover);
-    coverTexture.wrapS = THREE.RepeatWrapping;
-    coverTexture.wrapT = THREE.ClampToEdgeWrapping;
+    [tVeltliner, tWhite, tRed].forEach((t) => {
+      t.colorSpace = THREE.SRGBColorSpace;
+    });
 
-    // Lathe profile points for body & shoulders
-    const bodyPoints: THREE.Vector2[] = [];
-    bodyPoints.push(new THREE.Vector2(0, -1.68));
-    bodyPoints.push(new THREE.Vector2(0.28, -1.74));
-    bodyPoints.push(new THREE.Vector2(0.54, -1.80));
-    bodyPoints.push(new THREE.Vector2(0.58, -1.74));
-    bodyPoints.push(new THREE.Vector2(0.58, 0.35));
-    // Shoulder curve
-    for (let i = 0; i <= 10; i++) {
-      const t = i / 10;
-      const y = 0.35 + t * 0.75;
-      const x = 0.58 - 0.39 * Math.sin(t * Math.PI / 2);
-      bodyPoints.push(new THREE.Vector2(x, y));
-    }
-    // Neck cylinder
-    bodyPoints.push(new THREE.Vector2(0.19, 1.1));
-    bodyPoints.push(new THREE.Vector2(0.19, 1.35));
-    bodyPoints.push(new THREE.Vector2(0, 1.35));
+    // Proportional 3D Plane Geometry matching 4K resolution aspect ratio (2728 x 4096)
+    const planeGeo = new THREE.PlaneGeometry(4.0, 6.0, 32, 32);
 
-    // Lathe profile points for cover (foil cap)
-    const coverPoints: THREE.Vector2[] = [];
-    coverPoints.push(new THREE.Vector2(0, 1.35));
-    coverPoints.push(new THREE.Vector2(0.192, 1.35));
-    coverPoints.push(new THREE.Vector2(0.192, 1.95));
-    coverPoints.push(new THREE.Vector2(0.202, 1.95));
-    coverPoints.push(new THREE.Vector2(0.202, 2.05));
-    coverPoints.push(new THREE.Vector2(0, 2.05));
-
-    const bodyGeom = new THREE.LatheGeometry(bodyPoints, 64);
-    const coverGeom = new THREE.LatheGeometry(coverPoints, 64);
-
-    const bodyMat = new THREE.MeshStandardMaterial({
-      map: bodyTexture,
-      roughness: 0.12,
-      metalness: 0.05,
+    // Materials
+    const matVeltliner = new THREE.MeshStandardMaterial({
+      map: tVeltliner,
       transparent: true,
-      opacity: 0.98
+      opacity: 1.0,
+      roughness: 0.2,
+      metalness: 0.1,
+      side: THREE.DoubleSide
+    });
+    const matWhite = new THREE.MeshStandardMaterial({
+      map: tWhite,
+      transparent: true,
+      opacity: 0.0,
+      roughness: 0.2,
+      metalness: 0.1,
+      side: THREE.DoubleSide
+    });
+    const matRed = new THREE.MeshStandardMaterial({
+      map: tRed,
+      transparent: true,
+      opacity: 0.0,
+      roughness: 0.2,
+      metalness: 0.1,
+      side: THREE.DoubleSide
     });
 
-    const coverMat = new THREE.MeshStandardMaterial({
-      map: coverTexture,
-      roughness: 0.25,
-      metalness: 0.55
-    });
+    (veltlinerMatRef as any).current = matVeltliner;
+    (whiteMatRef as any).current = matWhite;
+    (redMatRef as any).current = matRed;
 
-    const bodyMesh = new THREE.Mesh(bodyGeom, bodyMat);
-    const coverMesh = new THREE.Mesh(coverGeom, coverMat);
+    // Meshes
+    const meshVeltliner = new THREE.Mesh(planeGeo, matVeltliner);
+    const meshWhite = new THREE.Mesh(planeGeo, matWhite);
+    const meshRed = new THREE.Mesh(planeGeo, matRed);
 
-    // Center mesh geometry vertically so rotation/tilting occurs around mass center
-    bodyMesh.position.y = -0.125;
-    coverMesh.position.y = -0.125;
+    meshVeltliner.position.set(0, 0, 0);
+    meshWhite.position.set(0, 0, 0.01);
+    meshRed.position.set(0, 0, 0.02);
 
-    const bottleGroup = new THREE.Group();
-    bottleGroup.add(bodyMesh);
-    bottleGroup.add(coverMesh);
-    scene.add(bottleGroup);
-    bottleGroupRef.current = bottleGroup;
+    meshWhite.visible = false;
+    meshRed.visible = false;
 
-    // Apply scale and default offset/rotation
-    bottleGroup.scale.set(scale, scale, scale);
-    bottleGroup.position.y = yPercent;
-    bottleGroup.rotation.y = rotationY;
-    bottleGroup.rotation.z = rotationZ;
+    (veltlinerMeshRef as any).current = meshVeltliner;
+    (whiteMeshRef as any).current = meshWhite;
+    (redMeshRef as any).current = meshRed;
 
-    // 6. ScrollTrigger animation integration for performance (60fps)
-    const ctx = gsap.context(() => {
-      if (scrollTriggerType === 'hero') {
-        // Rotate 180 degrees on Y-axis (reveal back label) and tilt 22 degrees (0.38 rad) on scroll
-        gsap.to(bottleGroup.rotation, {
-          y: Math.PI,
-          z: 0.38,
-          scrollTrigger: {
-            trigger: '#hero',
-            start: 'top top',
-            end: 'bottom top',
-            scrub: true
-          }
-        });
+    rootGroup.add(meshVeltliner);
+    rootGroup.add(meshWhite);
+    rootGroup.add(meshRed);
 
-        // Translate the bottle vertical and horizontal position to match the text layout
-        gsap.to(bottleGroup.position, {
-          y: yPercent - 0.15,
-          x: 0.15,
-          scrollTrigger: {
-            trigger: '#hero',
-            start: 'top top',
-            end: 'bottom top',
-            scrub: true
-          }
-        });
-      }
-    });
+    if (onReady) {
+      onReady();
+    }
 
-    // 7. Animation loop for rendering and optional idle float effect
+    // Animation Loop
     let animationFrameId: number;
-    const startTime = performance.now();
+    let clock = new THREE.Clock();
 
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
+      const elapsedTime = clock.getElapsedTime();
 
-      if (float && bottleGroupRef.current) {
-        const elapsedTime = (performance.now() - startTime) * 0.001;
-        // Subtle floating movement
-        bottleGroupRef.current.position.y = yPercent + Math.sin(elapsedTime * 1.5) * 0.08;
-        // Mild rotation wobble
-        bottleGroupRef.current.rotation.y = Math.cos(elapsedTime * 0.8) * 0.02;
+      // Gentle floating motion
+      if (float && rootGroup) {
+        rootGroup.position.y += Math.sin(elapsedTime * 1.5) * 0.0005;
       }
 
       renderer.render(scene, camera);
     };
+
     animate();
 
-    // 8. Resize handler
+    // Resize Handler
     const handleResize = () => {
-      if (!containerRef.current || !canvasRef.current) return;
+      if (!containerRef.current) return;
       const w = containerRef.current.clientWidth;
       const h = containerRef.current.clientHeight;
+
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
+
       renderer.setSize(w, h);
     };
+
     window.addEventListener('resize', handleResize);
 
     return () => {
-      ctx.revert();
-      cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(animationFrameId);
+      scene.clear();
       renderer.dispose();
-      bodyGeom.dispose();
-      coverGeom.dispose();
-      bodyMat.dispose();
-      coverMat.dispose();
+      planeGeo.dispose();
+      matVeltliner.dispose();
+      matWhite.dispose();
+      matRed.dispose();
+      tVeltliner.dispose();
+      tWhite.dispose();
+      tRed.dispose();
     };
-  }, [variant, scale, yPercent, float, scrollTriggerType]);
+  }, []);
 
   return (
-    <div ref={containerRef} style={{ width: '100%', height: '100%', position: 'relative' }}>
-      <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%' }} />
+    <div
+      ref={containerRef}
+      style={{
+        width: '100%',
+        height: '100%',
+        position: 'relative'
+      }}
+    >
+      <canvas
+        ref={canvasRef}
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'block'
+        }}
+      />
     </div>
   );
-}
+});
+
+export default BottleCanvas;

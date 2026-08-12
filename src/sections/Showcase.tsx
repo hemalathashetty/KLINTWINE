@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { FileText, Utensils, X } from 'lucide-react';
-import BottleCanvas from '../components/BottleCanvas';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,70 +13,104 @@ export default function Showcase({ lang }: ShowcaseProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const spotlightRef = useRef<HTMLDivElement>(null);
   const [activeWine, setActiveWine] = useState(0);
-  const [modalContent, setModalContent] = useState<{ title: string; body: string } | null>(null);
+  const [modalContent, setModalContent] = useState<{
+    type: 'tech' | 'food';
+    title: string;
+    items?: { label: string; val: string }[];
+    bullets?: string[];
+  } | null>(null);
 
   const wines = [
     {
       num: '01',
       type: lang === 'en' ? 'Dry White' : 'Blanc Sec',
-      years: '2023-2025',
+      years: '2023 Vintage',
       name: 'Grüner Veltliner',
-      flavor: lang === 'en' ? 'Citrus, yellow apple, ripe pear, paired with its typical hints of pepper' : 'Agrumes, pomme jaune, poire mûre, accompagnés de ses notes poivrées typiques',
+      flavor: lang === 'en' ? 'Citrus, yellow apple, ripe pear, paired with its typical hints of white pepper' : 'Agrumes, pomme jaune, poire mûre, accompagnés de ses notes poivrées typiques',
       title: '2023 KLIMT Grüner Veltliner',
       desc: lang === 'en' 
         ? 'A fresh and lively Austrian white with bright citrus, crisp apple and subtle pepper notes. A clean, refreshing wine that pairs effortlessly with light dishes and chilled moments.'
         : 'Un blanc autrichien frais et vif avec des notes d\'agrumes éclatantes, de pomme croustillante et de poivre subtil. Un vin propre et rafraîchissant qui s\'accorde sans effort avec des plats légers.',
-      color: 'rgba(164, 164, 115, 0.40)', // green-ish spotlight
+      color: 'rgba(164, 164, 115, 0.45)', // crisp green-gold spotlight
       bottleImg: '/uploads/gruner_veltliner_632b1976ea.webp',
-      techSheet: lang === 'en' 
-        ? 'Alcohol: 12.5% | Acid: 6.2 g/l | Residual Sugar: 1.1 g/l. Hand-harvested in mid-September from slate and limestone soils. Fermented in stainless steel tanks.'
-        : 'Alcool : 12,5% | Acidité : 6,2 g/l | Sucre résiduel : 1,1 g/l. Vendangé à la main mi-septembre sur des sols d\'ardoise et de calcaire.',
-      pairings: lang === 'en'
-        ? 'Pairs perfectly with Wiener Schnitzel, fresh seafood, spicy Asian salads, and goat cheese.'
-        : 'S\'accorde parfaitement avec une escalope viennoise, des fruits de mer frais et du fromage de chèvre.'
+      tags: ['Citrus Blossom', 'Yellow Apple', 'White Pepper', 'Limestone'],
+      techSheet: [
+        { label: 'Vintage', val: '2023' },
+        { label: 'Alcohol', val: '12.5% Vol' },
+        { label: 'Grape Variety', val: '100% Grüner Veltliner' },
+        { label: 'Soil Type', val: 'Loess & Primary Slate' },
+        { label: 'Acidity', val: '6.2 g/l' },
+        { label: 'Residual Sugar', val: '1.1 g/l' },
+        { label: 'Serving Temp', val: '8 - 10°C' }
+      ],
+      pairings: [
+        'Classic Austrian Wiener Schnitzel with lemon',
+        'Fresh Atlantic oysters and chilled seafood platters',
+        'Spicy Asian green papaya salads',
+        'Artisanal goat cheese with herbs'
+      ]
     },
     {
       num: '02',
       type: lang === 'en' ? 'Dry White' : 'Blanc Sec',
-      years: '2023-2025',
+      years: '2022 Vintage',
       name: 'White Blend',
-      flavor: lang === 'en' ? 'Fruity - refreshing - floral flavours - green apple - hint of elderflower and exotic' : 'Fruité - rafraîchissant - arômes floraux - pomme verte - note de sureau et fruits exotiques',
+      flavor: lang === 'en' ? 'Fruity & refreshing with floral elderflower notes, green apple, and exotic peach' : 'Fruité et rafraîchissant aux notes florales de sureau, pomme verte et pêche exotique',
       title: '2022 KLIMT White Blend',
       desc: lang === 'en'
         ? 'A smooth, elegant white blend with ripe stone-fruit aromas, gentle florals and a soft, rounded palate. Balanced and approachable, it is a versatile wine for everyday enjoyment and relaxed gatherings.'
         : 'Un assemblage de blancs doux et élégant avec des arômes de fruits à noyau mûrs, des notes florales douces et une bouche ronde. Équilibré et accessible, idéal pour les moments de détente.',
-      color: 'rgba(160, 137, 33, 0.40)', // golden spotlight
+      color: 'rgba(212, 175, 55, 0.45)', // shimmering golden spotlight
       bottleImg: '/uploads/white_blend_3978284690.webp',
-      techSheet: lang === 'en'
-        ? 'Alcohol: 12.0% | Acid: 5.8 g/l | Residual Sugar: 2.5 g/l. A blend of Chardonnay, Pinot Blanc, and Grüner Veltliner. Aged on lees for 3 months.'
-        : 'Alcool : 12,0% | Acidité : 5,8 g/l | Sucre résiduel : 2,5 g/l. Un assemblage de Chardonnay, Pinot Blanc et Grüner Veltliner.',
-      pairings: lang === 'en'
-        ? 'Pairs beautifully with grilled chicken, creamy pasta dishes, roasted vegetables, and mild cheeses.'
-        : 'S\'accorde à merveille avec du poulet grillé, des pâtes en sauce crémeuse et des fromages doux.'
+      tags: ['Honeyed Apricot', 'White Peach', 'Elderflower', 'Golden Slate'],
+      techSheet: [
+        { label: 'Vintage', val: '2022' },
+        { label: 'Alcohol', val: '12.5% Vol' },
+        { label: 'Grape Variety', val: 'Chardonnay, Pinot Blanc, Grüner Veltliner' },
+        { label: 'Soil Type', val: 'Calcareous Clay & Loam' },
+        { label: 'Acidity', val: '5.8 g/l' },
+        { label: 'Residual Sugar', val: '2.5 g/l' },
+        { label: 'Serving Temp', val: '10 - 12°C' }
+      ],
+      pairings: [
+        'Pan-seared sea bass with lemon herb butter',
+        'Creamy wild mushroom tagliatelle',
+        'Roasted poultry with apricot glaze',
+        'Mild Gruyère and aged Comté cheeses'
+      ]
     },
     {
       num: '03',
       type: lang === 'en' ? 'Dry Red' : 'Rouge Sec',
-      years: '2023-2025',
+      years: '2021 Vintage',
       name: 'Red Blend',
-      flavor: lang === 'en' ? 'Dark ruby red - black cherries - ripe plums - dark chocolate - fruity and juicy style - smooth tannins' : 'Rouge rubis foncé - cerises noires - prunes mûres - chocolat noir - style fruité et juteux - tanins souples',
+      flavor: lang === 'en' ? 'Dark ruby red with black cherries, ripe plums, dark cocoa, and velvety oak tannins' : 'Rouge rubis foncé avec cerises noires, prunes mûres, cacao amer et tanins veloutés',
       title: '2021 KLIMT Red Blend',
       desc: lang === 'en'
         ? 'A juicy, expressive red blend offering dark berries, soft spices and a velvety finish. Harmonious and modern in style, it is an easy-drinking wine that shines both on its own and with food.'
         : 'Un assemblage de rouges juteux et expressif offrant des baies noires, des épices douces et une finale veloutée. Harmoneux et moderne, agréable seul ou en accompagnement.',
-      color: 'rgba(103, 0, 0, 0.30)', // dark red spotlight
+      color: 'rgba(138, 28, 28, 0.45)', // deep crimson burgundy spotlight
       bottleImg: '/uploads/red_blend_e2fec91509.webp',
-      techSheet: lang === 'en'
-        ? 'Alcohol: 13.0% | Acid: 5.1 g/l | Residual Sugar: 1.0 g/l. A premium blend of Zweigelt and Blaufränkisch. Aged in oak barrels for 8 months.'
-        : 'Alcool : 13,0% | Acidité : 5,1 g/l | Sucre résiduel : 1,0 g/l. Assemblage haut de gamme de Zweigelt et Blaufränkisch.',
-      pairings: lang === 'en'
-        ? 'Pairs excellently with grilled steaks, roasted duck, tomato-based pasta dishes, and dark chocolate desserts.'
-        : 'S\'accorde parfaitement avec des steaks grillés, du canard rôti et des desserts au chocolat noir.'
+      tags: ['Dark Cherry', 'Roasted Plum', 'Black Cocoa', 'Velvet Oak'],
+      techSheet: [
+        { label: 'Vintage', val: '2021' },
+        { label: 'Alcohol', val: '13.5% Vol' },
+        { label: 'Grape Variety', val: 'Zweigelt & Blaufränkisch' },
+        { label: 'Aging', val: '8 Months in Austrian Oak Barriques' },
+        { label: 'Acidity', val: '5.1 g/l' },
+        { label: 'Residual Sugar', val: '1.0 g/l' },
+        { label: 'Serving Temp', val: '16 - 18°C' }
+      ],
+      pairings: [
+        'Prime grilled ribeye steak with rosemary',
+        'Roasted duck breast with blackberry reduction',
+        'Truffled wild mushroom risotto',
+        '70% Dark chocolate fondant & aged Gouda'
+      ]
     }
   ];
 
   useEffect(() => {
-    const bottles = gsap.utils.toArray('.bottle-visual');
     const textBlocks = gsap.utils.toArray('.wine-details-block');
 
     const mainTimeline = gsap.timeline({
@@ -113,48 +146,7 @@ export default function Showcase({ lang }: ShowcaseProps) {
       }
     });
 
-    // Animate Bottles sliding, crossfading, and rotating on scroll smoothly
-    bottles.forEach((bottle: any, idx) => {
-      if (idx === 0) {
-        gsap.set(bottle, { xPercent: 0, opacity: 1, scale: 1, rotate: -2 });
-        mainTimeline.to(bottle, {
-          xPercent: -120,
-          opacity: 0,
-          scale: 0.9,
-          rotate: -15,
-          duration: 1,
-          ease: 'power1.inOut'
-        }, 0.3);
-      } else if (idx === 1) {
-        gsap.set(bottle, { xPercent: 120, opacity: 0, scale: 0.9, rotate: 15 });
-        mainTimeline.to(bottle, {
-          xPercent: 0,
-          opacity: 1,
-          scale: 1,
-          rotate: -2,
-          duration: 1,
-          ease: 'power1.inOut'
-        }, 0.3);
-        mainTimeline.to(bottle, {
-          xPercent: -120,
-          opacity: 0,
-          scale: 0.9,
-          rotate: -15,
-          duration: 1,
-          ease: 'power1.inOut'
-        }, 1.3);
-      } else if (idx === 2) {
-        gsap.set(bottle, { xPercent: 120, opacity: 0, scale: 0.9, rotate: 15 });
-        mainTimeline.to(bottle, {
-          xPercent: 0,
-          opacity: 1,
-          scale: 1,
-          rotate: -2,
-          duration: 1,
-          ease: 'power1.inOut'
-        }, 1.3);
-      }
-    });
+    // 3D Bottle rotation/cross-fade is handled globally at App.tsx level
 
     // Animate text info slides (fade in / out on scroll timelines)
     textBlocks.forEach((block: any, idx) => {
@@ -218,45 +210,7 @@ export default function Showcase({ lang }: ShowcaseProps) {
         } as React.CSSProperties}
       />
 
-      {/* Floating Bottles Container */}
-      <div
-        style={{
-          position: 'absolute',
-          top: '12%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '400px',
-          height: '76vh',
-          zIndex: 5,
-          pointerEvents: 'none',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}
-      >
-        {wines.map((_, idx) => (
-          <div
-            key={idx}
-            className="bottle-visual"
-            style={{
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-          >
-            <BottleCanvas
-              variant={idx === 0 ? 'veltliner' : idx === 1 ? 'white' : 'red'}
-              scale={1.72}
-              float={activeWine === idx}
-              rotationY={0}
-              rotationZ={-0.03}
-            />
-          </div>
-        ))}
-      </div>
+      {/* Floating Bottles are rendered globally at App.tsx level */}
 
       {/* Pinned HTML Content Overlays */}
       <div
@@ -340,6 +294,25 @@ export default function Showcase({ lang }: ShowcaseProps) {
                 >
                   {wine.flavor}
                 </h3>
+                {/* Aroma Tags */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
+                  {wine.tags.map((tag, idx) => (
+                    <span
+                      key={idx}
+                      style={{
+                        fontSize: '0.75rem',
+                        letterSpacing: '0.04em',
+                        padding: '4px 12px',
+                        borderRadius: '16px',
+                        backgroundColor: 'rgba(25, 23, 20, 0.06)',
+                        color: '#191714',
+                        fontWeight: 500
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
 
               {/* Spacing / Empty columns */}
@@ -357,36 +330,50 @@ export default function Showcase({ lang }: ShowcaseProps) {
                 {/* Detail Buttons */}
                 <div style={{ display: 'flex', gap: '16px', marginTop: '10px' }}>
                   <button
-                    onClick={() => setModalContent({ title: lang === 'en' ? 'Technical Sheet' : 'Fiche Technique', body: wine.techSheet })}
+                    onClick={() =>
+                      setModalContent({
+                        type: 'tech',
+                        title: `${wine.title} — ${lang === 'en' ? 'Technical Sheet' : 'Fiche Technique'}`,
+                        items: wine.techSheet
+                      })
+                    }
                     className="glass-pill"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
                       gap: '8px',
-                      padding: '8px 16px',
+                      padding: '8px 18px',
                       borderRadius: '20px',
                       fontSize: '0.8rem',
-                      border: '1px solid rgba(25,23,20,0.15)',
+                      border: '1px solid rgba(25,23,20,0.18)',
                       textTransform: 'uppercase',
-                      letterSpacing: '0.05em'
+                      letterSpacing: '0.05em',
+                      cursor: 'pointer'
                     }}
                   >
                     <FileText size={14} />
                     {lang === 'en' ? 'Technical sheet' : 'Fiche technique'}
                   </button>
                   <button
-                    onClick={() => setModalContent({ title: lang === 'en' ? 'Food Pairing' : 'Accords Mets', body: wine.pairings })}
+                    onClick={() =>
+                      setModalContent({
+                        type: 'food',
+                        title: `${wine.title} — ${lang === 'en' ? 'Food Pairing' : 'Accords Mets'}`,
+                        bullets: wine.pairings
+                      })
+                    }
                     className="glass-pill"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
                       gap: '8px',
-                      padding: '8px 16px',
+                      padding: '8px 18px',
                       borderRadius: '20px',
                       fontSize: '0.8rem',
-                      border: '1px solid rgba(25,23,20,0.15)',
+                      border: '1px solid rgba(25,23,20,0.18)',
                       textTransform: 'uppercase',
-                      letterSpacing: '0.05em'
+                      letterSpacing: '0.05em',
+                      cursor: 'pointer'
                     }}
                   >
                     <Utensils size={14} />
@@ -405,8 +392,8 @@ export default function Showcase({ lang }: ShowcaseProps) {
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundColor: 'rgba(25, 23, 20, 0.4)',
-            backdropFilter: 'blur(8px)',
+            backgroundColor: 'rgba(25, 23, 20, 0.5)',
+            backdropFilter: 'blur(10px)',
             zIndex: 9999,
             display: 'flex',
             alignItems: 'center',
@@ -418,12 +405,12 @@ export default function Showcase({ lang }: ShowcaseProps) {
             className="glass-pill"
             style={{
               width: '100%',
-              maxWidth: '500px',
-              borderRadius: '20px',
-              padding: '30px',
+              maxWidth: '520px',
+              borderRadius: '24px',
+              padding: '36px',
               position: 'relative',
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              boxShadow: '0 20px 50px rgba(0,0,0,0.15)',
+              backgroundColor: '#FFFFFF',
+              boxShadow: '0 25px 60px rgba(0,0,0,0.25)',
               color: '#191714'
             }}
           >
@@ -431,28 +418,65 @@ export default function Showcase({ lang }: ShowcaseProps) {
               onClick={() => setModalContent(null)}
               style={{
                 position: 'absolute',
-                top: '20px',
-                right: '20px',
-                cursor: 'pointer'
+                top: '24px',
+                right: '24px',
+                cursor: 'pointer',
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                backgroundColor: '#ECE9E5',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
             >
-              <X size={20} />
+              <X size={16} />
             </button>
+
             <h3
               className="textStyle_heading3"
               style={{
                 fontFamily: "'Canela', serif",
-                marginBottom: '20px',
-                fontSize: '1.8rem',
+                marginBottom: '24px',
+                fontSize: '1.6rem',
                 borderBottom: '1px solid rgba(25,23,20,0.1)',
-                paddingBottom: '10px'
+                paddingBottom: '12px'
               }}
             >
               {modalContent.title}
             </h3>
-            <p className="textStyle_bodyText" style={{ lineHeight: 1.6, opacity: 0.9 }}>
-              {modalContent.body}
-            </p>
+
+            {modalContent.type === 'tech' && modalContent.items && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {modalContent.items.map((item, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      fontSize: '0.88rem',
+                      paddingBottom: '8px',
+                      borderBottom: idx < modalContent.items!.length - 1 ? '1px solid rgba(25,23,20,0.06)' : 'none'
+                    }}
+                  >
+                    <span style={{ opacity: 0.6, fontWeight: 500 }}>{item.label}</span>
+                    <span style={{ fontWeight: 600 }}>{item.val}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {modalContent.type === 'food' && modalContent.bullets && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                {modalContent.bullets.map((bullet, idx) => (
+                  <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', fontSize: '0.9rem', lineHeight: 1.5 }}>
+                    <span style={{ color: '#8f7734', fontWeight: 'bold' }}>•</span>
+                    <span style={{ opacity: 0.9 }}>{bullet}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

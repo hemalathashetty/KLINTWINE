@@ -130,7 +130,7 @@ export default function Heritage({ lang }: HeritageProps) {
           </p>
         </div>
 
-        {/* Asymmetric Floating Cards Layout (Matching User Screenshot 1) */}
+        {/* Asymmetric Floating Cards Layout with Video Intro */}
         <div
           style={{
             gridColumn: 'span 7',
@@ -141,15 +141,41 @@ export default function Heritage({ lang }: HeritageProps) {
             alignItems: 'center'
           }}
         >
-          {/* Card 1: Top Center Vineyard Row photo */}
+          {/* Intro Video Element */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '-5%',
+              right: '5%',
+              width: '280px',
+              height: '180px',
+              borderRadius: '16px',
+              overflow: 'hidden',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
+              zIndex: 5
+            }}
+          >
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              poster="/uploads/video_intro_frame_9449627751.webp"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            >
+              <source src="/uploads/video_intro_c5a431e24b.webm" type="video/webm" />
+            </video>
+          </div>
+
+          {/* Card 1: Rectangle 17880 */}
           <div
             ref={card1Ref}
             style={{
               position: 'absolute',
-              top: 0,
-              left: '12%',
+              top: '10%',
+              left: '5%',
               width: '340px',
-              height: '210px',
+              height: '220px',
               borderRadius: '16px',
               overflow: 'hidden',
               transition: 'transform 0.2s ease-out',
@@ -157,21 +183,21 @@ export default function Heritage({ lang }: HeritageProps) {
             }}
           >
             <img
-              src="/uploads/337321e1337f6bd836732a68372b5f8ec743efe6_1_7b69ffcb4c.webp"
-              alt="Klimt vineyard rows"
+              src="/uploads/Rectangle_17880_copy_538dd50133.webp"
+              alt="Klimt heritage vineyard"
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           </div>
 
-          {/* Card 2: Right Middle Outdoor Family Dining photo */}
+          {/* Card 2: Rectangle 17881 */}
           <div
             ref={card2Ref}
             style={{
               position: 'absolute',
-              top: '25%',
-              right: 0,
+              top: '40%',
+              right: '10%',
               width: '360px',
-              height: '220px',
+              height: '230px',
               borderRadius: '16px',
               overflow: 'hidden',
               transition: 'transform 0.2s ease-out',
@@ -179,21 +205,21 @@ export default function Heritage({ lang }: HeritageProps) {
             }}
           >
             <img
-              src="/uploads/bcee2a5c0c38f3c990c7948b948a60e4da667406_1_019ce6268c.webp"
-              alt="Friends enjoying Klimt Wine"
+              src="/uploads/Rectangle_17881_copy_27fdadcad6.webp"
+              alt="Esterhazy estate history"
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           </div>
 
-          {/* Card 3: Bottom Center Aerial Landscape photo */}
+          {/* Card 3: Rectangle 44 */}
           <div
             ref={card3Ref}
             style={{
               position: 'absolute',
               bottom: 0,
-              left: '15%',
-              width: '330px',
-              height: '200px',
+              left: '12%',
+              width: '350px',
+              height: '210px',
               borderRadius: '16px',
               overflow: 'hidden',
               transition: 'transform 0.2s ease-out',
@@ -201,8 +227,8 @@ export default function Heritage({ lang }: HeritageProps) {
             }}
           >
             <img
-              src="/uploads/499d0cfe5516b965d9e89e2e60b175511ab76890_0600604ef8.webp"
-              alt="Aerial vineyard landscape"
+              src="/uploads/Rectangle_44_copy_1ec4e5172a.webp"
+              alt="Austrian vineyard fields"
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           </div>

@@ -53,19 +53,19 @@ export default function Header({ lang, setLang, onNavigate, isDarkTheme = false,
           zIndex: 1000,
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '20px 40px',
+          alignItems: 'flex-start',
+          padding: '32px 50px',
           color: textColor,
           fontFamily: "'MonumentGrotesk', sans-serif",
           pointerEvents: 'none'
         }}
       >
-        {/* Navigation Link (Left) */}
+        {/* Navigation Link (Left Vertical Stack) */}
         <nav
           style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '4px',
+            gap: '6px',
             pointerEvents: 'auto'
           }}
         >
@@ -73,12 +73,13 @@ export default function Header({ lang, setLang, onNavigate, isDarkTheme = false,
             onClick={() => handleLinkClick('heritage')}
             style={{
               textAlign: 'left',
-              fontSize: '0.9rem',
+              fontSize: '0.85rem',
               color: textColor,
-              fontWeight: 500,
+              fontWeight: 400,
               letterSpacing: '0.02em',
               transition: 'opacity 0.2s',
-              opacity: 0.9
+              opacity: 0.9,
+              cursor: 'pointer'
             }}
             onMouseOver={(e) => (e.currentTarget.style.opacity = '1')}
             onMouseOut={(e) => (e.currentTarget.style.opacity = '0.9')}
@@ -89,12 +90,13 @@ export default function Header({ lang, setLang, onNavigate, isDarkTheme = false,
             onClick={() => handleLinkClick('region')}
             style={{
               textAlign: 'left',
-              fontSize: '0.9rem',
+              fontSize: '0.85rem',
               color: textColor,
-              fontWeight: 500,
+              fontWeight: 400,
               letterSpacing: '0.02em',
               transition: 'opacity 0.2s',
-              opacity: 0.9
+              opacity: 0.9,
+              cursor: 'pointer'
             }}
             onMouseOver={(e) => (e.currentTarget.style.opacity = '1')}
             onMouseOut={(e) => (e.currentTarget.style.opacity = '0.9')}
@@ -105,12 +107,13 @@ export default function Header({ lang, setLang, onNavigate, isDarkTheme = false,
             onClick={() => handleLinkClick('contacts')}
             style={{
               textAlign: 'left',
-              fontSize: '0.9rem',
+              fontSize: '0.85rem',
               color: textColor,
-              fontWeight: 500,
+              fontWeight: 400,
               letterSpacing: '0.02em',
               transition: 'opacity 0.2s',
-              opacity: 0.9
+              opacity: 0.9,
+              cursor: 'pointer'
             }}
             onMouseOver={(e) => (e.currentTarget.style.opacity = '1')}
             onMouseOut={(e) => (e.currentTarget.style.opacity = '0.9')}
@@ -119,7 +122,7 @@ export default function Header({ lang, setLang, onNavigate, isDarkTheme = false,
           </button>
         </nav>
 
-        {/* Center Logo */}
+        {/* Center Logo (Positioned directly above bottle neck) */}
         <a
           href="#"
           onClick={(e) => {
@@ -127,10 +130,14 @@ export default function Header({ lang, setLang, onNavigate, isDarkTheme = false,
             handleLinkClick('hero');
           }}
           style={{
+            position: 'absolute',
+            left: '50%',
+            top: '28px',
+            transform: 'translateX(-50%)',
             pointerEvents: 'auto',
             display: 'block',
-            width: '133px',
-            height: '54px'
+            width: '140px',
+            height: '46px'
           }}
         >
           <img
@@ -154,9 +161,10 @@ export default function Header({ lang, setLang, onNavigate, isDarkTheme = false,
             <button
               onClick={() => setLang('en')}
               style={{
-                fontWeight: lang === 'en' ? 'bold' : 'normal',
+                fontWeight: lang === 'en' ? '600' : '400',
                 opacity: lang === 'en' ? 1 : 0.5,
-                color: textColor
+                color: textColor,
+                cursor: 'pointer'
               }}
             >
               En
@@ -165,9 +173,10 @@ export default function Header({ lang, setLang, onNavigate, isDarkTheme = false,
             <button
               onClick={() => setLang('fr')}
               style={{
-                fontWeight: lang === 'fr' ? 'bold' : 'normal',
+                fontWeight: lang === 'fr' ? '600' : '400',
                 opacity: lang === 'fr' ? 1 : 0.5,
-                color: textColor
+                color: textColor,
+                cursor: 'pointer'
               }}
             >
               Fr
@@ -175,21 +184,24 @@ export default function Header({ lang, setLang, onNavigate, isDarkTheme = false,
           </div>
 
           {/* Buy Button */}
-          <button
-            onClick={onBuyClick}
+          <a
+            href="https://www.saq.com/fr/catalogsearch/result/?q=esterhazy&catalog_type=1&availability_front=En+ligne&availability_front=En+succursale"
+            target="_blank"
+            rel="noreferrer noopener"
             style={{
-              fontSize: '0.9rem',
+              fontSize: '0.85rem',
               color: textColor,
-              fontWeight: 500,
+              fontWeight: 400,
               letterSpacing: '0.02em',
               transition: 'opacity 0.2s',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              pointerEvents: 'auto'
             }}
             onMouseOver={(e) => (e.currentTarget.style.opacity = '0.75')}
             onMouseOut={(e) => (e.currentTarget.style.opacity = '1')}
           >
             {t[lang].buyWines}
-          </button>
+          </a>
         </div>
       </header>
 
@@ -257,8 +269,10 @@ export default function Header({ lang, setLang, onNavigate, isDarkTheme = false,
         </a>
 
         {/* Buy short link */}
-        <button
-          onClick={onBuyClick}
+        <a
+          href="https://www.saq.com/fr/catalogsearch/result/?q=esterhazy&catalog_type=1&availability_front=En+ligne&availability_front=En+succursale"
+          target="_blank"
+          rel="noreferrer noopener"
           style={{
             pointerEvents: 'auto',
             fontSize: '0.85rem',
@@ -270,7 +284,7 @@ export default function Header({ lang, setLang, onNavigate, isDarkTheme = false,
           }}
         >
           {t[lang].buyShort}
-        </button>
+        </a>
       </div>
 
       {/* Mobile Menu Drawer Overlay */}

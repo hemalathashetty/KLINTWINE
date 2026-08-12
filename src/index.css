@@ -162,6 +162,35 @@ img {
   z-index: 1;
 }
 
+/* Primary CTA used across sections (Buy button) */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 36px;
+  border-radius: 6px;
+  background-color: var(--colors-white);
+  color: var(--colors-brown);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: 0 12px 30px rgba(25,23,20,0.12);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.12s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px rgba(25,23,20,0.18);
+}
+
+/* Slightly heavier glass pill style for overlays */
+.glass-pill {
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(25,23,20,0.06);
+}
+
 /* Responsive Menu Drawer Styles */
 .mobile-menu-overlay {
   position: fixed;
@@ -248,3 +277,67 @@ img {
   height: 100vh;
   width: 100%;
 }
+
+/* Fixed Global 3D WebGL Bottle canvas container */
+.global-bottle-canvas-container {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9;
+}
+
+/* Standard z-index stack rules to ensure text/buttons sit on top of the bottle */
+.interactive-overlay-content {
+  position: relative;
+  z-index: 12;
+  pointer-events: auto;
+}
+
+/* Metallic Gold Accent Utilities */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #F4E2B6 0%, #D4AF37 50%, #AA7C11 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.border-gold-subtle {
+  border: 1px solid rgba(207, 166, 68, 0.3);
+}
+
+/* Luxury Interactive Hover Elevate Effects */
+button, a, .glass-pill {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+}
+
+a:hover, button:hover {
+  transform: translateY(-1px);
+}
+
+
+/* Responsive tweaks */
+@media (max-width: 992px) {
+  :root {
+    --spacing-grid: 16px;
+  }
+
+  .textStyle_heading1 {
+    font-size: clamp(2.2rem, 10vw, 4.8rem);
+  }
+
+  .textStyle_heading2 { font-size: clamp(1.6rem, 6.5vw, 3.6rem); }
+
+  .global-bottle-canvas-container {
+    display: none; /* Hide heavy WebGL canvas on small devices for perf */
+  }
+
+  .grid-container { padding-left: 12px; padding-right: 12px; }
+
+  .wine-article { padding: 60px 12px 40px; }
+}
+
+@media (min-width: 1200px) {
+  .grid-container { max-width: 1280px; margin: 0 auto; }
+}
+

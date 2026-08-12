@@ -6,10 +6,9 @@ gsap.registerPlugin(ScrollTrigger);
 
 interface BuyProps {
   lang: 'en' | 'fr';
-  onBuyClick: () => void;
 }
 
-export default function Buy({ lang, onBuyClick }: BuyProps) {
+export default function Buy({ lang }: BuyProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const textGroupRef = useRef<HTMLDivElement>(null);
   const branchBgRef = useRef<HTMLDivElement>(null);
@@ -83,17 +82,16 @@ export default function Buy({ lang, onBuyClick }: BuyProps) {
         overflow: 'hidden'
       }}
     >
-      {/* Curved branch asset stretching across the Buy CTA background */}
       <div
         ref={branchBgRef}
         style={{
           position: 'absolute',
           left: '50%',
-          top: '50%',
+          top: '55%',
           transform: 'translate(-50%, -50%)',
-          width: '120%',
-          height: '120%',
-          opacity: 0.15,
+          width: '130%',
+          height: '130%',
+          opacity: 0.8,
           zIndex: 1,
           pointerEvents: 'none'
         }}
@@ -104,7 +102,8 @@ export default function Buy({ lang, onBuyClick }: BuyProps) {
           style={{
             width: '100%',
             height: '100%',
-            objectFit: 'cover'
+            objectFit: 'contain',
+            filter: 'brightness(0.6) contrast(1.2)'
           }}
         />
       </div>
@@ -113,7 +112,7 @@ export default function Buy({ lang, onBuyClick }: BuyProps) {
         ref={textGroupRef}
         style={{
           position: 'relative',
-          zIndex: 2,
+          zIndex: 12,
           maxWidth: '700px',
           textAlign: 'center',
           display: 'flex',
@@ -150,9 +149,11 @@ export default function Buy({ lang, onBuyClick }: BuyProps) {
           {t[lang].desc}
         </p>
 
-        {/* Premium shop button */}
-        <button
-          onClick={onBuyClick}
+        {/* Premium shop button (external store) */}
+        <a
+          href="https://www.saq.com/fr/catalogsearch/result/?q=esterhazy&catalog_type=1&availability_front=En+ligne&availability_front=En+succursale"
+          target="_blank"
+          rel="noreferrer noopener"
           className="btn-primary"
           style={{
             marginTop: '16px',
@@ -163,23 +164,22 @@ export default function Buy({ lang, onBuyClick }: BuyProps) {
             fontWeight: 600,
             backgroundColor: '#ffffff',
             color: '#191714',
-            border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
             boxShadow: '0 10px 25px rgba(25,23,20,0.15)',
             transition: 'transform 0.3s ease, box-shadow 0.3s ease'
           }}
           onMouseOver={(e) => {
-            e.currentTarget.style.transform = 'scale(1.03)';
-            e.currentTarget.style.boxShadow = '0 15px 30px rgba(25,23,20,0.25)';
+            (e.currentTarget as HTMLElement).style.transform = 'scale(1.03)';
+            (e.currentTarget as HTMLElement).style.boxShadow = '0 15px 30px rgba(25,23,20,0.25)';
           }}
           onMouseOut={(e) => {
-            e.currentTarget.style.transform = 'scale(1)';
-            e.currentTarget.style.boxShadow = '0 10px 25px rgba(25,23,20,0.15)';
+            (e.currentTarget as HTMLElement).style.transform = 'scale(1)';
+            (e.currentTarget as HTMLElement).style.boxShadow = '0 10px 25px rgba(25,23,20,0.15)';
           }}
         >
           {t[lang].button}
-        </button>
+        </a>
       </div>
     </section>
   );
